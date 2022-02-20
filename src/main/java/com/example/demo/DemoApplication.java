@@ -51,9 +51,9 @@ public class DemoApplication {
 				DisplayedList += "{if(checkbox" + i + "){window.location.href = 'http://localhost:8080/update?todoId=" + i + "';}}";
 				DisplayedList += "</script>";
 				DisplayedList += "</form>";
-				i++;
 			}
 			
+			i++;
 		}
 
 		for(TODO Todo : TODOs){

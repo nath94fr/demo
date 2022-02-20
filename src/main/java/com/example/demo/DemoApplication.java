@@ -13,10 +13,10 @@ import org.springframework.web.bind.annotation.RestController;
 @SpringBootApplication
 @RestController
 public class DemoApplication {
-	static TODO TODO1 = new TODO("List my TODOs");
-	static TODO TODO2 = new TODO("Change a TODO state");
-	static TODO TODO3 = new TODO("Detail a TODO");
-	static TODO TODO4 = new TODO("Add a new TODO");
+	static TODO TODO1 = new TODO("List my TODOs", "As a user I would like to list my current todos");
+	static TODO TODO2 = new TODO("Change a TODO state", "As a user I would like to change a todo state by checking a \"box\"");
+	static TODO TODO3 = new TODO("Detail a TODO", "As a user I would like to display one of my todo in a separate or dedicated view. This todo will contain its title and a description (which is a new information not shown in the previous view).");
+	static TODO TODO4 = new TODO("Add a new TODO", "As a user I would like to add a new todo in my list");
 	
 	private static ArrayList<TODO> TODOs = new ArrayList<TODO>(){
 		{
@@ -43,7 +43,8 @@ public class DemoApplication {
 
 			if(Todo.getState() == 1){
 				DisplayedList += "<form> <input type='checkbox' id='TODO" + i + "' name='TODO" + i + "' value='TODO" + i + "'>";
-				DisplayedList += "<label for='TODO" + i + "' text-decoration='line-through'>" + Todo.getTitle() + "</label>";
+				DisplayedList += "<label for='TODO" + i + "'>" + Todo.getTitle() + "</label>";
+				DisplayedList += "<br><a href='http://localhost:8080/detail?todoId=" + i + "'>More details here</a>";
 				DisplayedList += "<script type='text/javascript'>";
 				DisplayedList += "var checkbox" + i + " = document.querySelector('input[value=\"TODO" + i + "\"]');";
 				DisplayedList += "checkbox" + i + ".onchange = function()";
@@ -72,6 +73,20 @@ public class DemoApplication {
 		String returnToLoad = "<script type='text/javascript'>window.location.href = 'http://localhost:8080/load';</script>";
 
 		return String.format(returnToLoad);
+	}
+
+	@GetMapping("/detail")
+	public String detail(@RequestParam(value = "todoId") int todoId) {
+
+		String DisplayedView = "";
+
+		DisplayedView += "<label style='font-size:40px'>" + TODOs.get(todoId).getTitle() + "</label>";
+		DisplayedView += "<br><br>";
+		DisplayedView += "<label>" + TODOs.get(todoId).getDescription() + "</label>";
+		DisplayedView += "<br><br>";
+		DisplayedView += "<a href='http://localhost:8080/load'>Retour à la liste</a>";
+
+		return String.format(DisplayedView);
 	}
 
 }

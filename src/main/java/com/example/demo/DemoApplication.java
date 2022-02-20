@@ -62,6 +62,9 @@ public class DemoApplication {
 			}
 		}
 
+		DisplayedList += "<br><br>";
+		DisplayedList += "<a href='http://localhost:8080/createform'>Ajouter un TODO</a>";
+
 		return String.format(DisplayedList);
 	}
 
@@ -87,6 +90,44 @@ public class DemoApplication {
 		DisplayedView += "<a href='http://localhost:8080/load'>Retour à la liste</a>";
 
 		return String.format(DisplayedView);
+	}
+
+	@GetMapping("/createform")
+	public String createform() {
+
+		String createForm = "";
+
+		createForm += "<label for='todoTitle'>Title : </label>";
+		createForm += "<input type='text' id='todoTitle' name='todoTitle' required size='10'>";
+		createForm += "<br> <br>";
+		createForm += "<label for='todoDesc'>Description : </label>";
+		createForm += "<input type='text' id='todoDesc' name='todoDesc' required size='50'>";
+		createForm += "<br> <br>";
+		createForm += "<input type='button' name='submit' value='Create the TODO'>";
+
+		createForm += "<script type='text/javascript'>";
+		createForm += "var button = document.querySelector('input[name=\"submit\"]');";
+		createForm += "button.onclick = function() {";
+		createForm += "var title = document.querySelector('input[name=\"todoTitle\"]').value;";
+		createForm += "var description = document.querySelector('input[name=\"todoDesc\"]').value;";
+		createForm += "window.location.href = 'http://localhost:8080/create";
+		createForm += "?todoTitle=' + title";
+		createForm += " + '&todoDesc=' + description";
+		createForm += ";}";
+		createForm += "</script>";
+
+		return String.format(createForm);
+	}
+
+	@GetMapping("/create")
+	public String create(@RequestParam(value = "todoTitle") String todoTitle, @RequestParam(value = "todoDesc", defaultValue = "None") String todoDesc) {
+
+		TODO newTODO = new TODO(todoTitle, todoDesc);
+		TODOs.add(0, newTODO);
+
+		String createForm = "<script type='text/javascript'>window.location.href = 'http://localhost:8080/load';</script>";
+
+		return String.format(createForm);
 	}
 
 }

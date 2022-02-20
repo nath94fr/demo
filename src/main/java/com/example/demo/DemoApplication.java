@@ -13,34 +13,65 @@ import org.springframework.web.bind.annotation.RestController;
 @SpringBootApplication
 @RestController
 public class DemoApplication {
+	static TODO TODO1 = new TODO("List my TODOs");
+	static TODO TODO2 = new TODO("Change a TODO state");
+	static TODO TODO3 = new TODO("Detail a TODO");
+	static TODO TODO4 = new TODO("Add a new TODO");
 	
-	private static final ArrayList<TODO> TODOs = new ArrayList<TODO>();
+	private static ArrayList<TODO> TODOs = new ArrayList<TODO>(){
+		{
+			add(TODO1);
+			add(TODO2);
+			add(TODO3);
+			add(TODO4);
+		}
+	};
 
 	public static void main(String[] args) {
-		//US1 -> Hard coded TODOs
-		//Création of a list of TODOs for demo based on demo user stories
-		TODO TODO1 = new TODO("List my TODOs");
-		TODOs.add(TODO1);
-		TODO TODO2 = new TODO("Change a TODO state");
-		TODOs.add(TODO2);
-		TODO TODO3 = new TODO("Detail a TODO");
-		TODOs.add(TODO3);
-		TODO TODO4 = new TODO("Add a new TODO");
-		TODOs.add(TODO4);
 
 		SpringApplication.run(DemoApplication.class, args);
 	}
 	
-	@GetMapping("/start")
-	public String start() {
+	@GetMapping("/load")
+	public String load() {
 		//US1 -> Listing the TODOs
-		String DisplayedList = "";
+		//US2 -> Listing with Checkboxs and sorting TODOs by state
+		String DisplayedList = "TODOs : <br><br>";
+
+		int i = 0;
+		for(TODO Todo : TODOs){
+
+			if(Todo.getState() == 1){
+				DisplayedList += "<form> <input type='checkbox' id='TODO" + i + "' name='TODO" + i + "' value='TODO" + i + "'>";
+				DisplayedList += "<label for='TODO" + i + "' text-decoration='line-through'>" + Todo.getTitle() + "</label>";
+				DisplayedList += "<script type='text/javascript'>";
+				DisplayedList += "var checkbox" + i + " = document.querySelector('input[value=\"TODO" + i + "\"]');";
+				DisplayedList += "checkbox" + i + ".onchange = function()";
+				DisplayedList += "{if(checkbox" + i + "){window.location.href = 'http://localhost:8080/update?todoId=" + i + "';}}";
+				DisplayedList += "</script>";
+				DisplayedList += "</form>";
+				i++;
+			}
+			
+		}
 
 		for(TODO Todo : TODOs){
-			DisplayedList += Todo.getTitle() + "<br>";
+			if(Todo.getState() == 2){
+				DisplayedList += "<br><strike>" + Todo.getTitle() + "</strike>";
+			}
 		}
 
 		return String.format(DisplayedList);
+	}
+
+	@GetMapping("/update")
+	public String update(@RequestParam(value = "todoId") int todoId) {
+
+		TODOs.get(todoId).setSateToDone();
+
+		String returnToLoad = "<script type='text/javascript'>window.location.href = 'http://localhost:8080/load';</script>";
+
+		return String.format(returnToLoad);
 	}
 
 }
